@@ -21,10 +21,10 @@ RSpec.describe Application do
     it "Returns 200 OK with list of albums" do
       response = get("/albums")
 
-      expected_response = "Doolittle, Surfer Rosa, Waterloo, Super Trouper, Bossanova, Lover, Folklore, I Put a Spell on You, Baltimore, Here Comes the Sun, Fodder on My Wings, Ring Ring"
-
       expect(response.status).to eq(200)
-      expect(response.body).to eq(expected_response)
+      expect(response.body).to include("Title: Doolittle")
+      expect(response.body).to include("Title: Surfer Rosa")
+      expect(response.body).to include("Released: 1988")
     end
   end
 
@@ -61,10 +61,19 @@ RSpec.describe Application do
       expect(response.body).to eq('')
 
       response = get("/artists")
-      
+
       expect(response.status).to eq(200)
       expect(response.body).to include('Wild nothing')
     end
   end
 
+  context "GET to /albums/:id" do
+    it "Returns 200 OK with info about a single album" do
+      response = get("/albums/1")
+
+      expect(response.status).to eq(200)
+      expect(response.body).to include("<h1>Doolittle</h1>")
+      expect(response.body).to include("Artist: Pixies")
+    end
+  end
 end
