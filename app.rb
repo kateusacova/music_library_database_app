@@ -31,4 +31,20 @@ class Application < Sinatra::Base
     repo.create(album)
   end
 
+  get '/artists' do
+    repo = ArtistRepository.new
+
+    repo.all.map { |artist| artist.name }.join(", ")
+  end
+
+  post '/artists' do
+    repo = ArtistRepository.new
+    
+    artist = Artist.new
+    artist.name = params[:name]
+    artist.genre = params[:genre]
+
+    repo.create(artist)
+  end
+  
 end

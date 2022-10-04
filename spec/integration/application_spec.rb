@@ -42,4 +42,29 @@ RSpec.describe Application do
     end
   end
 
+  context "GET to /artists" do
+    it "Returns 200 OK and returns a list of artists" do
+      response = get("/artists")
+
+      expected_response = "Pixies, ABBA, Taylor Swift, Nina Simone, Kiasmos"
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+  end
+
+  context "POST to /artists" do
+    it "Returns 200 OK and creates a new artist" do
+      response = post("/artists", name: "Wild nothing", genre: "Indie")
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq('')
+
+      response = get("/artists")
+      
+      expect(response.status).to eq(200)
+      expect(response.body).to include('Wild nothing')
+    end
+  end
+
 end
