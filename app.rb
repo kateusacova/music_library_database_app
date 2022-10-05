@@ -18,11 +18,16 @@ class Application < Sinatra::Base
     repo =  AlbumRepository.new
     
     @albums = repo.all
-    
+
     erb(:albums)
   end
 
   post '/albums' do
+    if album_invalid_request_parameters? 
+      status 400
+      return ''
+    end
+
     repo =  AlbumRepository.new
     album = Album.new
 
@@ -31,15 +36,28 @@ class Application < Sinatra::Base
     album.artist_id = params[:artist_id]
 
     repo.create(album)
+
+    erb(:album_created)
+  end
+
+  get '/albums/new' do
+    erb(:new_album)
   end
 
   get '/artists' do
     repo = ArtistRepository.new
 
-    repo.all.map { |artist| artist.name }.join(", ")
+    @artists = repo.all
+
+    erb(:artists)
   end
 
   post '/artists' do
+    if artist_invalid_request_parameters?
+      status 400
+      return ''
+    end
+
     repo = ArtistRepository.new
     
     artist = Artist.new
@@ -47,7 +65,15 @@ class Application < Sinatra::Base
     artist.genre = params[:genre]
 
     repo.create(artist)
+
+    erb(:artist_created)
   end
+
+  get '/artists/new' do
+    erb(:new_artist)
+  end
+
+
 
   get '/albums/:id' do
     artist_repo = ArtistRepository.new
@@ -60,5 +86,22 @@ class Application < Sinatra::Base
     erb(:album)
   end
 
+  get '/artists/:id' do
+    artist_repo = ArtistRepository.new
+
+    @artist = artist_repo.find(params[:id])
+
+    erb(:artist)
+  end
+
+  private
+
+  def album_invalid_request_parameters?
+    params[:title] == nil || params[:release_year] == nil || params[:artist_id] == nil
+  end
+
+  def artist_invalid_request_parameters?
+    params[:name] == nil || params[:genre] == nil 
+  end
 
 end
